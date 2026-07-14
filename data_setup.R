@@ -24,4 +24,5 @@ risk_stack <- c(risk, risk_var) %>%
   mask(risk_mask, updatevalue = 0) %>%
   mask(risk)
 
-plot(st_geometry(idn_shp), add=TRUE)
+writeRaster(risk_stack, "data/risk_masked.tif")
+
