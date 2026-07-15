@@ -170,6 +170,80 @@ ui <- shiny::fluidPage(
           padding: 0;
         }
 
+        .author-summary-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 2000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          background: rgba(15, 23, 42, 0.56);
+        }
+
+        .author-summary-dialog {
+          width: min(640px, 100%);
+          max-height: calc(100vh - 48px);
+          overflow-y: auto;
+          border-radius: 10px;
+          background: #ffffff;
+          box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+          color: #17202a;
+        }
+
+        .author-summary-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          padding: 22px 24px 16px;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .author-summary-header h2 {
+          margin: 0;
+          font-size: 22px;
+          font-weight: 700;
+          line-height: 1.25;
+        }
+
+        .author-summary-body {
+          padding: 20px 24px;
+          font-size: 16px;
+          line-height: 1.65;
+        }
+
+        .author-summary-body p {
+          margin: 0;
+        }
+
+        .author-summary-body p + p {
+          margin-top: 1em;
+        }
+
+        .author-summary-footer {
+          display: flex;
+          justify-content: flex-end;
+          padding: 0 24px 22px;
+        }
+
+        .author-summary-dismiss {
+          padding: 10px 18px;
+          border: 0;
+          border-radius: 5px;
+          background: #2563eb;
+          color: #ffffff;
+          font-size: 15px;
+          font-weight: 600;
+        }
+
+        .author-summary-dismiss:hover,
+        .author-summary-dismiss:focus {
+          background: #1d4ed8;
+          outline: 3px solid rgba(37, 99, 235, 0.25);
+          outline-offset: 2px;
+        }
+
         .app-shell {
           display: grid;
           grid-template-columns: 300px minmax(0, 1fr);
@@ -285,6 +359,29 @@ ui <- shiny::fluidPage(
         }
 
         @media (max-width: 760px) {
+          .author-summary-overlay {
+            padding: 14px;
+          }
+
+          .author-summary-dialog {
+            max-height: calc(100vh - 28px);
+          }
+
+          .author-summary-header,
+          .author-summary-body {
+            padding-left: 18px;
+            padding-right: 18px;
+          }
+
+          .author-summary-body {
+            font-size: 15px;
+          }
+
+          .author-summary-footer {
+            padding-right: 18px;
+            padding-bottom: 18px;
+          }
+
           .app-shell {
             grid-template-columns: 1fr;
             grid-template-rows: auto minmax(0, 1fr);
@@ -316,6 +413,72 @@ ui <- shiny::fluidPage(
           }
         }
         "
+      )
+    )
+  ),
+  tags$script(
+    HTML(
+      "
+      function dismissAuthorSummary() {
+        var modal = document.getElementById('author-summary-modal');
+        if (modal) {
+          modal.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          dismissAuthorSummary();
+        }
+      });
+      "
+    )
+  ),
+  div(
+    id = "author-summary-modal",
+    class = "author-summary-overlay",
+    role = "dialog",
+    `aria-modal` = "true",
+    `aria-labelledby` = "author-summary-title",
+    div(
+      class = "author-summary-dialog",
+      div(
+        class = "author-summary-header",
+        h2(id = "author-summary-title", "Author summary")
+      ),
+      div(
+        class = "author-summary-body",
+        
+        p(
+          "To predict spatial variation in ", tags$em("P. knowlesi"), " transmission risk, 
+          we built a ", tags$strong("boosted regression tree model"), " to learn associations between 
+          remotely-sensed environmental data, including ", tags$strong("elevation"), ", ", tags$strong("land cover"), ", 
+          and annually-varying ", tags$strong("forest disturbance"), ", ", 
+          tags$strong("temperature"), " and ", tags$strong("wetness"), " indices, 
+          and locations where ", tags$em("P. knowlesi"), " malaria was identified."
+        ),
+        p(
+          "Our predictions are therefore of ", tags$strong("environmental suitability for transmission"), " 
+          of ", tags$em("P. knowlesi"), " malaria. We have applied a mask to remove areas outside of the 
+          ranges of non-human host and vector species. The uncertainty surface describes 
+          ", tags$strong("variance in bootstrapped predictions"), " from the model: we fitted the model to 
+          slightly different samples of the ", tags$em("P. knowlesi"), " malaria infection dataset to 
+          evaluate model sensitivity to environmentally-outlying infections."
+        ),
+        p(
+          "Read more about the model in Tobin et al., 2024:", 
+          HTML('<a href="https://doi.org/10.1371/journal.pntd.0011570">https://doi.org/10.1371/journal.pntd.0011570</a>')
+        )
+      ),
+      div(
+        class = "author-summary-footer",
+        tags$button(
+          type = "button",
+          class = "author-summary-dismiss",
+          onclick = "dismissAuthorSummary()",
+          autofocus = NA,
+          "Enter app"
+        )
       )
     )
   ),
