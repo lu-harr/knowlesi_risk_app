@@ -3,8 +3,6 @@ library(leaflet)
 library(terra)
 library(sf)
 
-message("test")
-
 risk_path <- "data/risk_masked.tif"
 districts_path <- "data/idn_districts.shp"
 
@@ -444,7 +442,7 @@ ui <- shiny::fluidPage(
       class = "author-summary-dialog",
       div(
         class = "author-summary-header",
-        h2(id = "author-summary-title", "Author summary")
+        h2(id = "author-summary-title", "Plasmodium knowlesi transmission suitability")
       ),
       div(
         class = "author-summary-body",
@@ -486,8 +484,7 @@ ui <- shiny::fluidPage(
     class = "app-shell",
     tags$aside(
       class = "sidebar",
-      h1(tags$em("Plasmodium knowlesi"), " risk"),
-      div(class = "subtitle", "Tobin et al., 2024, PLOS Negl. Trop. Dis."),
+      h1(tags$em("Plasmodium knowlesi"), " transmission suitability"),
       radioButtons(
         inputId = "surface",
         label = "Display",
