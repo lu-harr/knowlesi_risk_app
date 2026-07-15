@@ -306,6 +306,33 @@ ui <- shiny::fluidPage(
           height: 100%;
         }
 
+        .map-wrap {
+          position: relative;
+        }
+
+        .about-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          z-index: 1000;
+          padding: 7px 12px;
+          border: 1px solid rgba(15, 23, 42, 0.2);
+          border-radius: 4px;
+          background: rgba(255, 255, 255, 0.96);
+          box-shadow: 0 1px 5px rgba(15, 23, 42, 0.22);
+          color: #17202a;
+          font-size: 13px;
+          font-weight: 600;
+          line-height: 1.2;
+        }
+
+        .about-button:hover,
+        .about-button:focus {
+          background: #f1f5f9;
+          outline: 2px solid rgba(37, 99, 235, 0.35);
+          outline-offset: 2px;
+        }
+
         .leaflet-control-attribution,
         .leaflet-control-layers,
         .leaflet-control-scale,
@@ -421,6 +448,19 @@ ui <- shiny::fluidPage(
         var modal = document.getElementById('author-summary-modal');
         if (modal) {
           modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+        }
+      }
+
+      function showAuthorSummary() {
+        var modal = document.getElementById('author-summary-modal');
+        if (modal) {
+          modal.style.display = 'flex';
+          modal.setAttribute('aria-hidden', 'false');
+          var dismissButton = modal.querySelector('.author-summary-dismiss');
+          if (dismissButton) {
+            dismissButton.focus();
+          }
         }
       }
 
@@ -495,7 +535,17 @@ ui <- shiny::fluidPage(
         selected = "mean"
       )
     ),
-    div(class = "map-wrap", leafletOutput("map", height = "100%"))
+    div(
+      class = "map-wrap",
+      leafletOutput("map", height = "100%"),
+      tags$button(
+        type = "button",
+        class = "about-button",
+        onclick = "showAuthorSummary()",
+        `aria-label` = "Open author summary",
+        "About"
+      )
+    )
   )
 )
 
