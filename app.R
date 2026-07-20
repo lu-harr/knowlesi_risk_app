@@ -122,7 +122,7 @@ if (file.exists(stats_rds) && file.exists(cells_rds)) {
 # -----------------------------------------------------------------------------
 i18n <- list(
   en = list(
-    title_html      = HTML("<em>Plasmodium knowlesi</em> risk"),
+    title_html      = HTML("<em>Plasmodium knowlesi</em> transmission suitability"),
     subtitle        = HTML("Tobin et al., 2024, PLOS Negl. Trop. Dis. &middot; <a href='https://pubmed.ncbi.nlm.nih.gov/38252650/' target='_blank' rel='noopener'>PMID: 38252650</a>"),
     language         = "Language",
     display          = "Display",
@@ -132,30 +132,30 @@ i18n <- list(
     basemap_clean    = "Clean (no labels)",
     basemap_street   = "Street map (landmarks)",
     basemap_sat      = "Satellite",
-    opacity          = "Risk layer opacity",
+    opacity          = "Transmission suitability layer opacity",
     search           = "Find a district",
     search_ph        = "Type a district or regency name...",
     district_panel   = "Selected district",
-    no_district      = "Click a district on the map, or search above, to see its predicted risk.",
-    mean_risk_lab    = "Mean predicted risk",
+    no_district      = "Click a district on the map, or search above, to see its predicted transmission suitability.",
+    mean_risk_lab    = "Mean predicted transmission suitability",
     uncertainty_lab  = "Mean uncertainty (variance)",
     range_lab        = "Range across district",
-    dist_title       = "Risk distribution within district",
+    dist_title       = "Transmission suitability distribution within district",
     dist_x           = "Predicted transmission suitability",
     dist_y           = "Grid cells",
     dist_meanline    = "district mean",
     export           = "Download data",
-    export_csv       = "District risk table (CSV)",
+    export_csv       = HTML("District transmission suitability<br>table (CSV)"),
     export_png       = "Save current map (PNG)",
     methods          = "Methods, data & citation",
-    legend_mean      = "Mean predicted relative risk",
+    legend_mean      = "Mean predicted transmission suitability",
     legend_uncert    = "Prediction variance",
     modal_title      = "About this map",
     modal_close      = "Explore the map",
     modal_dont       = "Don't show this again",
     reopen_summary   = "About this map",
     lay_summary      = HTML(paste0(
-      "<p>To predict spatial variation in <em>P. knowlesi</em> transmission risk, we ",
+      "<p>To predict spatial variation in <em>P. knowlesi</em> relative transmission risk, we ",
       "built a <strong>boosted regression tree</strong> model to learn associations ",
       "between remotely-sensed environmental data, including <strong>elevation, land ",
       "cover</strong>, and annually-varying <strong>forest disturbance, temperature",
@@ -163,9 +163,9 @@ i18n <- list(
       "<em>P. knowlesi</em> malaria was identified.</p>",
       "<p>Our predictions are therefore of <strong>environmental suitability for ",
       "transmission</strong> of <em>P. knowlesi</em> malaria. We have applied a mask ",
-      "to remove areas outside of the ranges of non-human host and vector species. ",
+      "to remove predictions to areas outside of the ranges of non-human host and vector species. ",
       "The uncertainty surface describes <strong>variance in bootstrapped ",
-      "predictions</strong> from the model: we fitted the model to slightly different ",
+      "predictions</strong> from the model: we fitted the model to different ",
       "samples of the <em>P. knowlesi</em> malaria infection dataset to evaluate ",
       "model sensitivity to environmentally-outlying infections.</p>",
       "<p>Read more about the model in Tobin et al., 2024: ",
@@ -194,7 +194,7 @@ i18n <- list(
     ))
   ),
   id = list(
-    title_html      = HTML("Risiko <em>Plasmodium knowlesi</em>"),
+    title_html      = HTML("Kecocokan penularan <em>Plasmodium knowlesi</em>"),
     subtitle        = HTML("Tobin dkk., 2024, PLOS Negl. Trop. Dis. &middot; <a href='https://pubmed.ncbi.nlm.nih.gov/38252650/' target='_blank' rel='noopener'>PMID: 38252650</a>"),
     language         = "Bahasa",
     display          = "Tampilan",
@@ -204,30 +204,30 @@ i18n <- list(
     basemap_clean    = "Polos (tanpa label)",
     basemap_street   = "Peta jalan (penanda lokasi)",
     basemap_sat      = "Satelit",
-    opacity          = "Opasitas lapisan risiko",
+    opacity          = "Opasitas lapisan kecocokan penularan",
     search           = "Cari kabupaten/kota",
     search_ph        = "Ketik nama kabupaten atau kota...",
     district_panel   = "Kabupaten/kota terpilih",
-    no_district      = "Klik sebuah kabupaten pada peta, atau cari di atas, untuk melihat perkiraan risikonya.",
-    mean_risk_lab    = "Rata-rata perkiraan risiko",
+    no_district      = "Klik sebuah kabupaten pada peta, atau cari di atas, untuk melihat perkiraan kecocokan penularannya.",
+    mean_risk_lab    = "Rata-rata perkiraan kecocokan penularan",
     uncertainty_lab  = "Rata-rata ketidakpastian (varians)",
     range_lab        = "Rentang dalam kabupaten",
-    dist_title       = "Sebaran risiko dalam kabupaten",
+    dist_title       = "Sebaran kecocokan penularan dalam kabupaten",
     dist_x           = "Perkiraan kecocokan penularan",
     dist_y           = "Sel grid",
     dist_meanline    = "rata-rata kabupaten",
     export           = "Unduh data",
-    export_csv       = "Tabel risiko kabupaten (CSV)",
+    export_csv       = HTML("Tabel kecocokan penularan<br>kabupaten/kota (CSV)"),
     export_png       = "Simpan peta saat ini (PNG)",
     methods          = "Metode, data & sitasi",
-    legend_mean      = "Rata-rata perkiraan risiko relatif",
+    legend_mean      = "Rata-rata perkiraan kecocokan penularan",
     legend_uncert    = "Varians prediksi",
     modal_title      = "Tentang peta ini",
     modal_close      = "Jelajahi peta",
     modal_dont       = "Jangan tampilkan lagi",
     reopen_summary   = "Tentang peta ini",
     lay_summary      = HTML(paste0(
-      "<p>Untuk memprediksi variasi spasial risiko penularan <em>P. knowlesi</em>, ",
+      "<p>Untuk memprediksi variasi spasial risiko relatif penularan <em>P. knowlesi</em>, ",
       "kami membangun model <strong>boosted regression tree</strong> untuk ",
       "mempelajari hubungan antara data lingkungan hasil penginderaan jauh &mdash; ",
       "meliputi <strong>elevasi, tutupan lahan</strong>, serta indeks <strong>gangguan ",
@@ -236,9 +236,9 @@ i18n <- list(
       "teridentifikasi.</p>",
       "<p>Dengan demikian, prediksi kami menggambarkan <strong>kecocokan lingkungan ",
       "bagi penularan</strong> malaria <em>P. knowlesi</em>. Kami menerapkan masker ",
-      "untuk menghapus area di luar jangkauan spesies inang non-manusia dan vektor. ",
+      "untuk menghapus prediksi pada area di luar jangkauan spesies inang non-manusia dan vektor. ",
       "Permukaan ketidakpastian menggambarkan <strong>varians prediksi bootstrap",
-      "</strong> dari model: kami menyesuaikan model pada sampel yang sedikit berbeda ",
+      "</strong> dari model: kami menyesuaikan model pada sampel yang berbeda ",
       "dari kumpulan data infeksi malaria <em>P. knowlesi</em> untuk mengevaluasi ",
       "sensitivitas model terhadap infeksi yang secara lingkungan merupakan pencilan ",
       "(outlier).</p>",
@@ -332,7 +332,25 @@ add_surface_legend <- function(map, surface, lang) {
   legend_title  <- if (surface == "mean") tr$legend_mean else tr$legend_uncert
   legend_breaks <- if (surface == "mean") seq(0, 0.8, by = 0.2) else seq(0, 3, by = 1)
   legend_labels <- format_legend_labels(legend_breaks)
-  legend_gradient <- paste(rev(map_palette), collapse = ", ")
+  legend_domain <- surface_domains[[surface]]
+  legend_positions <- 100 * (
+    legend_breaks - legend_domain[["min"]]
+  ) / (
+    legend_domain[["max"]] - legend_domain[["min"]]
+  )
+  legend_positions <- pmin(100, pmax(0, legend_positions))
+  legend_label_tags <- Map(function(label, position) {
+    label_style <- if (position == 0) {
+      "left: 0;"
+    } else {
+      paste0(
+        "left: ", sprintf("%.6f", position),
+        "%; transform: translateX(-50%);"
+      )
+    }
+    tags$span(style = label_style, label)
+  }, legend_labels, legend_positions)
+  legend_gradient <- paste(map_palette, collapse = ", ")
 
   legend_html <- tags$div(
     tags$div(class = "legend-title", legend_title),
@@ -341,12 +359,12 @@ add_surface_legend <- function(map, surface, lang) {
       tags$div(
         class = "legend-gradient",
         style = paste0(
-          "background: linear-gradient(to bottom, ", legend_gradient, ");"
+          "background: linear-gradient(to right, ", legend_gradient, ");"
         )
       ),
       tags$div(
         class = "legend-labels",
-        lapply(rev(legend_labels), tags$span)
+        legend_label_tags
       )
     )
   )
@@ -404,16 +422,19 @@ ui <- shiny::fluidPage(
       .stat-card .dist-name { font-weight: 700; font-size: 15px; margin-bottom: 8px; }
       .stat-row { display: flex; justify-content: space-between; font-size: 13px; margin: 3px 0; }
       .stat-row .val { font-weight: 700; }
+      .stat-divider { border: 0; border-top: 1px solid #cbd5e1; margin: 8px 0; }
       .muted { color: #64748b; font-size: 13px; line-height: 1.4; }
       details.methods { border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 10px; background: #fff; }
       details.methods summary { cursor: pointer; font-weight: 700; font-size: 13px; color: #334155; padding: 6px 0; }
       details.methods .methods-body { font-size: 12.5px; line-height: 1.5; color: #334155; }
       .dl-btn { display: block; width: 100%; margin: 6px 0 0; font-size: 13px; }
+      .shiny-download-link.dl-btn { height: auto; line-height: 1.25; white-space: normal; text-align: center; }
       .risk-legend-control { padding: 8px 10px; background: rgba(255,255,255,0.94); border: 1px solid rgba(15,23,42,0.12); border-radius: 4px; box-shadow: 0 1px 5px rgba(15,23,42,0.22); color: #17202a; }
       .risk-legend-control .legend-title { margin-bottom: 6px; font-size: 12px; font-weight: 700; line-height: 1.25; }
-      .risk-legend-control .legend-scale { display: grid; grid-template-columns: 18px auto; column-gap: 8px; align-items: stretch; }
-      .risk-legend-control .legend-gradient { width: 18px; height: 96px; border: 1px solid rgba(15,23,42,0.18); }
-      .risk-legend-control .legend-labels { display: flex; flex-direction: column; justify-content: space-between; height: 96px; font-size: 11px; line-height: 1; white-space: nowrap; }
+      .risk-legend-control .legend-scale { width: 180px; }
+      .risk-legend-control .legend-gradient { width: 180px; height: 14px; border: 1px solid rgba(15,23,42,0.18); }
+      .risk-legend-control .legend-labels { position: relative; width: 180px; height: 14px; margin-top: 5px; font-size: 11px; line-height: 1; white-space: nowrap; }
+      .risk-legend-control .legend-labels span { position: absolute; top: 0; }
       .modal-lay p { line-height: 1.55; }
       .modal-lay .lay-lang-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #0f766e; background: #ccfbf1; border-radius: 4px; padding: 2px 8px; margin: 0 0 6px; }
       .modal-lay .lay-divider { border: 0; border-top: 1px solid #e2e8f0; margin: 18px 0 14px; }
@@ -514,7 +535,7 @@ server <- function(input, output, session) {
       ),
       checkboxInput(
         "show_risk",
-        if (is_id) "Tampilkan lapisan risiko" else "Show risk layer",
+        if (is_id) "Tampilkan lapisan kecocokan penularan" else "Show transmission suitability layer",
         value = isolate(input$show_risk) %||% TRUE
       ),
       checkboxInput(
@@ -585,13 +606,14 @@ server <- function(input, output, session) {
                  tags$span(tr$mean_risk_lab),
                  tags$span(class = "val", format(round(row$mean_risk, 3), nsmall = 3))),
         tags$div(class = "stat-row",
-                 tags$span(tr$uncertainty_lab),
-                 tags$span(class = "val", format(round(row$mean_uncertainty, 3), nsmall = 3))),
-        tags$div(class = "stat-row",
                  tags$span(tr$range_lab),
                  tags$span(class = "val",
                            paste0(format(round(row$risk_min, 2), nsmall = 2), " - ",
-                                  format(round(row$risk_max, 2), nsmall = 2))))
+                                  format(round(row$risk_max, 2), nsmall = 2)))),
+        tags$hr(class = "stat-divider"),
+        tags$div(class = "stat-row",
+                 tags$span(tr$uncertainty_lab),
+                 tags$span(class = "val", format(round(row$mean_uncertainty, 3), nsmall = 3)))
       ),
       tags$div(class = "control-label", style = "margin-top:6px;", tr$dist_title),
       plotOutput("dist_plot", height = "170px")
@@ -606,8 +628,20 @@ server <- function(input, output, session) {
     req(length(vals) > 1)
     op <- par(mar = c(4, 4, 1, 1), cex = 0.9)
     on.exit(par(op))
-    hist(vals, breaks = 20, col = "#5b8fbf", border = "#ffffff",
-         main = "", xlab = tr$dist_x, ylab = tr$dist_y)
+    histogram <- hist(vals, breaks = 20, plot = FALSE)
+    risk_palette <- leaflet::colorNumeric(
+      palette = map_palette,
+      domain = surface_domains$mean,
+      na.color = "transparent"
+    )
+    plot(
+      histogram,
+      col = risk_palette(histogram$mids),
+      border = "#ffffff",
+      main = "",
+      xlab = tr$dist_x,
+      ylab = tr$dist_y
+    )
     m <- mean(vals, na.rm = TRUE)
     abline(v = m, col = "#b91c1c", lwd = 2)
     usr <- par("usr")
