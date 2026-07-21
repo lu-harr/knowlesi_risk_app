@@ -11,6 +11,9 @@
 #       responsive (mobile-friendly) layout
 # =============================================================================
 
+# note: there's a known bug with "show labels" option and "street map" base map
+# but chatty g can't seem to work this one out and the open plan is TOO LOUD - LH come back here
+
 library(shiny)
 library(leaflet)
 library(terra)
@@ -275,6 +278,21 @@ basemap_providers <- list(
   sat    = leaflet::providers$Esri.WorldImagery
 )
 
+# Use label-free variants below the raster where the provider offers one.
+# Mapnik has no labels-only or no-label variant, so its original tiles remain
+# below the raster while the closest transparent street labels are added above.
+basemap_no_label_providers <- list(
+  clean  = leaflet::providers$CartoDB.PositronNoLabels,
+  street = leaflet::providers$OpenStreetMap.Mapnik,
+  sat    = leaflet::providers$Esri.WorldImagery
+)
+
+label_providers <- list(
+  clean  = leaflet::providers$CartoDB.PositronOnlyLabels,
+  street = leaflet::providers$CartoDB.VoyagerOnlyLabels,
+  sat    = leaflet::providers$CartoDB.VoyagerOnlyLabels
+)
+
 # -----------------------------------------------------------------------------
 # 4. Map-building helpers
 # -----------------------------------------------------------------------------
@@ -386,8 +404,8 @@ district_popup <- function(id, lang) {
   paste0(
     "<div class='district-popup'>",
     "<strong>", districts$district_label[id], "</strong><br/>",
-    tr$mean_risk_lab, ": <b>", format(round(row$mean_risk, 3), nsmall = 3), "</b><br/>",
-    tr$uncertainty_lab, ": <b>", format(round(row$mean_uncertainty, 3), nsmall = 3), "</b>",
+    tr$mean_risk_lab, ": <b>", format(round(row$mean_risk, 2), nsmall = 2), "</b><br/>",
+    tr$uncertainty_lab, ": <b>", format(round(row$mean_uncertainty, 2), nsmall = 2), "</b>",
     "</div>"
   )
 }
@@ -604,7 +622,7 @@ server <- function(input, output, session) {
         tags$div(class = "dist-name", districts$district_label[id]),
         tags$div(class = "stat-row",
                  tags$span(tr$mean_risk_lab),
-                 tags$span(class = "val", format(round(row$mean_risk, 3), nsmall = 3))),
+                 tags$span(class = "val", format(round(row$mean_risk, 2), nsmall = 2))),
         tags$div(class = "stat-row",
                  tags$span(tr$range_lab),
                  tags$span(class = "val",
@@ -613,7 +631,7 @@ server <- function(input, output, session) {
         tags$hr(class = "stat-divider"),
         tags$div(class = "stat-row",
                  tags$span(tr$uncertainty_lab),
-                 tags$span(class = "val", format(round(row$mean_uncertainty, 3), nsmall = 3)))
+                 tags$span(class = "val", format(round(row$mean_uncertainty, 2), nsmall = 2)))
       ),
       tags$div(class = "control-label", style = "margin-top:6px;", tr$dist_title),
       plotOutput("dist_plot", height = "170px")
@@ -689,18 +707,37 @@ server <- function(input, output, session) {
     m
   })
 
-  # ---- basemap switch -------------------------------------------------------
-  observeEvent(input$basemap, {
-    prov <- basemap_providers[[input$basemap]]
-    # street/satellite look best at full opacity; clean slightly muted
-    op <- if (input$basemap == "clean") 0.9 else 1
-    leaflet::leafletProxy("map") |>
+  # ---- basemap and label-layer switch ---------------------------------------
+  update_map_tiles <- function() {
+    basemap <- input$basemap %||% "clean"
+    labels_on_top <- isTRUE(input$labels_top)
+    base_provider <- if (labels_on_top) {
+      basemap_no_label_providers[[basemap]]
+    } else {
+      basemap_providers[[basemap]]
+    }
+
+    # Street/satellite look best at full opacity; clean slightly muted.
+    opacity <- if (basemap == "clean") 0.9 else 1
+    proxy <- leaflet::leafletProxy("map") |>
       leaflet::clearGroup("basemap") |>
+      leaflet::clearGroup("labels") |>
       leaflet::addProviderTiles(
-        prov, group = "basemap",
-        options = leaflet::providerTileOptions(opacity = op, zIndex = 1)
+        base_provider,
+        group = "basemap",
+        options = leaflet::providerTileOptions(opacity = opacity, zIndex = 1)
       )
-  }, ignoreInit = TRUE)
+
+    if (labels_on_top) {
+      proxy <- proxy |>
+        leaflet::addProviderTiles(
+          label_providers[[basemap]],
+          group = "labels",
+          options = leaflet::providerTileOptions(pane = "labels", zIndex = 416)
+        )
+    }
+    proxy
+  }
 
   # ---- redraw surface/legend on layer, opacity or language change -----------
   redraw_surface <- function() {
@@ -716,20 +753,12 @@ server <- function(input, output, session) {
     proxy
   }
 
-  # place & street labels rendered ABOVE the risk raster
-  update_labels <- function() {
-    proxy <- leaflet::leafletProxy("map") |> leaflet::clearGroup("labels")
-    if (isTRUE(input$labels_top)) {
-      proxy |> leaflet::addProviderTiles(
-        leaflet::providers$CartoDB.PositronOnlyLabels,
-        group = "labels",
-        options = leaflet::providerTileOptions(pane = "labels", zIndex = 416)
-      )
-    }
-  }
-
   observeEvent(input$show_risk,  redraw_surface(), ignoreInit = TRUE)
-  observeEvent(input$labels_top, update_labels(),  ignoreInit = TRUE)
+  observeEvent(
+    list(input$basemap, input$labels_top),
+    update_map_tiles(),
+    ignoreInit = TRUE
+  )
   observeEvent(list(input$surface, input$opacity, input$lang), {
     redraw_surface()
   }, ignoreInit = TRUE)
