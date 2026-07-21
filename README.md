@@ -9,3 +9,5 @@ Run the app with:
 ```r
 shiny::runApp()
 ```
+
+Deployed on Posit Connect Cloud [here](https://019f600f-482a-3ea7-f415-6f5bcf66d6ce.share.connect.posit.cloud/).
