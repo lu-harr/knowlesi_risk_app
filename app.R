@@ -22,11 +22,6 @@ library(sf)
 # small null-coalescing helper
 `%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
 
-# Optional: PNG map export is provided by leaflet.extras2::addEasyprint.
-# The app degrades gracefully (button simply hidden) if it isn't installed.
-has_easyprint <- requireNamespace("leaflet.extras2", quietly = TRUE) &&
-  exists("addEasyprint", where = asNamespace("leaflet.extras2"))
-
 # -----------------------------------------------------------------------------
 # 1. Data
 # -----------------------------------------------------------------------------
@@ -462,6 +457,69 @@ ui <- shiny::fluidPage(
         .sidebar { border-right: 0; border-bottom: 1px solid #d7dee8; max-height: none; }
         .map-wrap, #map { height: 62vh; }
       }
+    ")),
+    tags$script(src = "html2canvas.min.js"),
+    tags$script(HTML("
+      function exportCurrentMap() {
+        var mapElement = document.getElementById('map');
+        if (!mapElement || typeof window.html2canvas !== 'function') {
+          window.alert('The map image exporter could not be loaded.');
+          return false;
+        }
+
+        window.html2canvas(mapElement, {
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: '#ffffff',
+          logging: false,
+          scale: Math.min(window.devicePixelRatio || 1, 2),
+          onclone: function(clonedDocument) {
+            var districtSvgs = clonedDocument.querySelectorAll(
+              '#map .leaflet-districts-pane svg'
+            );
+            districtSvgs.forEach(function(svg) {
+              var transform = svg.style.transform;
+              if (!transform || transform === 'none') return;
+
+              // html2canvas 1.4.1 applies transforms on SVG elements twice.
+              // Transfer the transform to a regular div in the cloned document,
+              // where it is applied once, without changing the live Leaflet map.
+              var wrapper = clonedDocument.createElement('div');
+              wrapper.style.position = 'absolute';
+              wrapper.style.left = '0';
+              wrapper.style.top = '0';
+              wrapper.style.transform = transform;
+              wrapper.style.transformOrigin = svg.style.transformOrigin || '0 0';
+              svg.style.transform = 'none';
+              svg.parentNode.insertBefore(wrapper, svg);
+              wrapper.appendChild(svg);
+            });
+          }
+        }).then(function(canvas) {
+          canvas.toBlob(function(blob) {
+            if (!blob) {
+              window.alert('The map image could not be created.');
+              return;
+            }
+            var url = window.URL.createObjectURL(blob);
+            var download = document.createElement('a');
+            download.href = url;
+            download.download = 'knowlesi-transmission-suitability-map.png';
+            document.body.appendChild(download);
+            download.click();
+            download.remove();
+            window.setTimeout(function() {
+              window.URL.revokeObjectURL(url);
+            }, 1000);
+          }, 'image/png');
+        }).catch(function(error) {
+          console.error('Map export failed:', error);
+          window.alert(
+            'The map image could not be created. Please wait for the map tiles to load and try again.'
+          );
+        });
+        return false;
+      }
     "))
   ),
   div(
@@ -583,10 +641,13 @@ server <- function(input, output, session) {
     tagList(
       tags$div(class = "control-label", tr$export),
       downloadButton("dl_csv", tr$export_csv, class = "dl-btn btn-sm"),
-      if (has_easyprint)
-        tags$a(class = "dl-btn btn btn-sm btn-default",
-               onclick = "document.querySelector('.leaflet-control-easyPrint a')?.click();",
-               tr$export_png)
+      tags$a(
+        href = "#",
+        role = "button",
+        class = "dl-btn btn btn-sm btn-default",
+        onclick = "return exportCurrentMap();",
+        tr$export_png
+      )
     )
   })
 
@@ -681,7 +742,7 @@ server <- function(input, output, session) {
 
   # ---- base map -------------------------------------------------------------
   output$map <- leaflet::renderLeaflet({
-    m <- leaflet::leaflet(options = leaflet::leafletOptions(preferCanvas = TRUE)) |>
+    m <- leaflet::leaflet(options = leaflet::leafletOptions(preferCanvas = FALSE)) |>
       leaflet::addMapPane("risk", zIndex = 410) |>
       leaflet::addMapPane("labels", zIndex = 415) |>
       leaflet::addMapPane("districts", zIndex = 420) |>
@@ -697,13 +758,6 @@ server <- function(input, output, session) {
       add_surface("mean", opacity = 0.82) |>
       add_surface_legend("mean", "en") |>
       add_districts()
-    if (has_easyprint) {
-      m <- leaflet.extras2::addEasyprint(
-        m, options = leaflet.extras2::easyprintOptions(
-          exportOnly = TRUE, hideControlContainer = TRUE
-        )
-      )
-    }
     m
   })
 
