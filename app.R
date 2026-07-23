@@ -166,6 +166,7 @@ i18n <- list(
       "predictions</strong> from the model: we fitted the model to different ",
       "samples of the <em>P. knowlesi</em> malaria infection dataset to evaluate ",
       "model sensitivity to environmentally-outlying infections.</p>",
+      "<p>The model surfaces have spatial resolution of &asymp; 5 x 5 km<sup>2</sup>.</p>",
       "<p>Read more about the model in Tobin et al., 2024: ",
       "<a href='https://doi.org/10.1371/journal.pntd.0011570' target='_blank' ",
       "rel='noopener'>doi:10.1371/journal.pntd.0011570</a></p>"
@@ -240,6 +241,7 @@ i18n <- list(
       "dari kumpulan data infeksi malaria <em>P. knowlesi</em> untuk mengevaluasi ",
       "sensitivitas model terhadap infeksi yang secara lingkungan merupakan pencilan ",
       "(outlier).</p>",
+      "<p>Permukaan model memiliki resolusi spasial &asymp; 5 x 5 km<sup>2</sup>.</p>",
       "<p>Baca selengkapnya tentang model ini di Tobin dkk., 2024: ",
       "<a href='https://doi.org/10.1371/journal.pntd.0011570' target='_blank' ",
       "rel='noopener'>doi:10.1371/journal.pntd.0011570</a></p>"
