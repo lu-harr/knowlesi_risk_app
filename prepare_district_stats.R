@@ -68,12 +68,30 @@ district_stats <- do.call(rbind, lapply(seq_len(n), function(i) {
   )
 }))
 
+# share of each district's land inside the model's host/vector mask.
+# Cells outside the mask are stored as 0 in risk_masked.tif, so without this
+# "outside the model" is indistinguishable from "very low suitability".
+mask_path <- "data/prediction_masking.tif"
+if (file.exists(mask_path)) {
+  # denominator = cells with a model prediction; a cell counts as covered only
+  # if the mask is 1 (mask NA = "not land" on the mask grid, e.g. Weh island)
+  mk <- terra::extract(c(risk[["prediction_mean"]], terra::rast(mask_path)), dv)
+  mk <- mk[!is.na(mk[[2]]), ]
+  cov <- tapply(mk[[3]], mk$ID, function(x) mean(!is.na(x) & x == 1))
+  district_stats$model_coverage <- as.numeric(cov[as.character(seq_len(n))])
+} else {
+  warning("data/prediction_masking.tif not found; model_coverage not computed")
+}
+
 saveRDS(district_stats, "data/district_stats.rds")
 saveRDS(district_cells, "data/district_cells.rds")
 
 # handy flat export for colleagues who just want the numbers
 utils::write.csv(
   district_stats[, c("name_2", "name_1", "mean_risk", "sd_risk",
-                     "mean_uncertainty", "risk_min", "risk_max", "n_cells")],
+                     "mean_uncertainty", "risk_min", "risk_max", "n_cells",
+                     intersect("model_coverage", names(district_stats)))],
   "data/district_risk_table.csv", row.names = FALSE
 )
+
+message("Done. Wrote district_stats.rds, district_cells.rds and district_risk_table.csv")

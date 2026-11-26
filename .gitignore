@@ -1,1 +1,11 @@
-data/
+# Data are built locally (data_setup.R + prepare_*.R) and not tracked,
+# except the small hand-curated evidence tables the app reads:
+data/*
+!data/district_evidence.csv
+!data/subdistrict_evidence.csv
+!data/elimination_status.csv
+!data/published_pk_records.csv
+!data/published_pk_records_README.md
+
+# Generated outputs
+appendix/
